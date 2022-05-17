@@ -3,8 +3,9 @@ import { EzReactTable } from "ez-react-table";
 import "ez-react-table/lib/main.css";
 import "ez-react-table/lib/styles.css";
 
-export default function App() {
+function App() {
   const [coins, setCoins] = useState([]);
+
   const fetchCoins = async () => {
     try {
       const res = await fetch(
@@ -13,18 +14,18 @@ export default function App() {
       const data = await res.json();
       setCoins(data);
     } catch (e) {
-      alert("Api error");
+      alert("api error", e);
     }
   };
   useEffect(() => {
     fetchCoins();
   }, []);
+
   const columns = [
     {
       title: "Name",
       key: "name",
-      width: 200,
-      render: (value, object) => {
+      format: (value, object) => {
         return (
           <div style={{ display: "flex", alignItems: "center" }}>
             <img height="20px" width="20px" src={object?.image} alt="coin" />
@@ -35,22 +36,19 @@ export default function App() {
     },
     {
       title: "Symbol",
-      center: true,
+      align: "center",
       key: "symbol",
-      width: 120,
-      render: (value, object) => <div>{value.toUpperCase()}</div>,
+      format: (value) => <div>{value.toUpperCase()}</div>,
     },
     {
       title: "Price",
       key: "current_price",
-      width: 100,
-      render: (value, object) => <div>{`$${value}`}</div>,
+      format: (value) => <div>{`$${value}`}</div>,
     },
     {
       title: "Change",
       key: "price_change_percentage_24h",
-      width: 100,
-      render: (value, object) => {
+      format: (value) => {
         return (
           <div style={{ color: /-/i.test(value) ? "#ff0374" : "#06a847" }}>
             {value}%
@@ -59,15 +57,19 @@ export default function App() {
       },
     },
   ];
+
   return (
-    <EzReactTable
-      cols={columns}
-      data={coins}
-      darkMode
-      title="Crypto Tracker"
-      defaultSort="name"
-      accentColor="#ffbc03"
-      tableHeight={300}
-    />
+    <>
+      <EzReactTable
+        cols={columns}
+        data={coins}
+        darkMode
+        title="Crypto Tracker"
+        defaultSort="name"
+        accentColor="#ffbc03"
+        tableHeight={300}
+      />
+    </>
   );
 }
+export default App;
